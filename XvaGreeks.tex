@@ -81,7 +81,7 @@
         \item CVA: counterparty credit risk adjustment
         \item DVA: Own credit risk adjustment
         \item FVA: Funding cost
-        \item MVA: Margin cost
+        \item MVA: Initial Margin cost
     \end{itemize}
 \end{frame}
 
@@ -92,10 +92,10 @@
             \item Piterburg(2010):
             Replication theory を使ったFVAの導出
             \item Burgard and Kjaer(2011,  2013), Kjaer(2017):
-            Semi-ReplicationによるXVAの定式化(Quant of the year)
-            \item Green, Knyon():
+            Semi-ReplicationによるXVAの定式化(Quant of the year 2015)
+            \item Green, Knyon(2014, 2015):
             Semi-Replicationに基づくKVA, MVA 等の導入
-            \item その他の定式化 : Fuji and Takahashi(2014), Kusuoka(2013), Takada(2014)
+            \item その他の定式化 : Fuji and Takahashi(2011), Kusuoka(2012), Takada(2014)
         \end{itemize}
         \item XVA(FVA)の定義をめぐる議論
         \begin{itemize}
@@ -129,6 +129,7 @@
             \item スプレッドの関係, r : risk free rate　
             $$r^* = r + s^*, \ s^* = (1-R^*)\lambda^*, \ *= B, C$$
             \item $C = C^V + C^I$ : collateral (Variation margin, initial margin)
+            \item $r_{C^V} , r_{C^I}$ : collateral rates
         \end{itemize}
     \end{itemize}
 \end{frame}
@@ -137,12 +138,12 @@
 Bank から見たDerivativeの価値 $\hat{V}$ 
    $$\hat{V} = \hat{V}(t, X, J^B, J^C), $$
    $$ \hat{V}(T, X, 0, 0) = H(X),$$
-   $$\hat{V}(t, X, 1, 0) = g^B, \hat{V}(t, X, 0, 1) = g^c.$$
+   $$\hat{V}(t, X, 1, 0) = g^B, \hat{V}(t, X, 0, 1) = g^C.$$
  Hedging portfolio value $\Pi$
 $$\Pi = \textcolor{red}{\theta^X X} + \textcolor{purple}{\theta^B P^B} + \textcolor{blue}{\theta^C P^C} + \textcolor{red}{\phi^X \beta^X} + \textcolor{blue}{\phi^C \beta^C} - C^V + C^I,$$
    Hedge assetはRepo調達を仮定 
    $$\textcolor{red}{\theta^X X + \phi^X \beta^X = 0},\ \textcolor{blue}{\theta^C P^C + \phi^C \beta^C = 0}, $$
-   Funding condition
+   Replication(Funding condition)
    $$ \hat{V} = \Pi $$
    $$\Leftrightarrow \hat{V} + \textcolor{purple}{\theta^B P^B} -C^V + C^I = 0.$$
 
@@ -150,45 +151,59 @@ $$\Pi = \textcolor{red}{\theta^X X} + \textcolor{purple}{\theta^B P^B} + \textco
 
 \begin{frame}
 Self-financing condition
-$$d \Pi = \theta^X dX + \theta^B dP^B + \theta^C dP^C $$
-$$ - \theta^X r^X X dt - \theta^C r^C P^C dt - dC^V + dC^I,$$
+$$d \Pi = \theta^X dX + \theta^B dP^B + \theta^C dP^C 
++\phi^X d\beta^X + \phi^C d\beta^C - dC^V + dC^I,$$
 The dynamics of Hedge portfolio $\hat{V} + \Pi$
 $$ d (\hat{V} + \Pi) = (\textcolor{red}{\theta^X + \frac{ \partial \hat{V}}{\partial X}} )dX $$
-$$ + \textcolor{blue}{\{ (\frac{\partial }{ \partial t} + \mathcal{A}) \hat{V} + r^F\delta^FP^F + \lambda^c(g^c - \hat{V}) -r^vC^v - r_iC_i \}}dt$$
+$$ + \textcolor{blue}{\{ (\partial_t + \frac{1}{2} \sigma_X^2 X^2 \partial_X^2) \hat{V} + \theta^B r^B P^B + \theta^C r^C P^C}$$ 
+$$ \textcolor{blue}{-\theta^C \gamma^C P^C -\theta^X \gamma^X X -r^VC^V - r^IC^I \}}dt$$
 $$+ \textcolor{purple}{(g^B - \hat{V} -\theta^BP^B )} dJ^B + \textcolor{magenta}{(g^C - \hat{V} - \theta^CP^C)} dJ^C$$
 \end{frame}
 
 \begin{frame}
     Market riskとCounterparty credit risk は完全hedge
     \begin{itemize}
-        \item $\theta^X = -\frac{ \partial \hat{V}}{\partial X}$
-        \item $ \theta^CP^C = g^C - \hat{V} $ 
+        \item $\textcolor{red}{\theta^X = -\frac{ \partial \hat{V}}{\partial X}}$
+        \item $ \textcolor{magenta}{\theta^CP^C = g^C - \hat{V} }$ 
     \end{itemize}
 
     Own default riskは消せない(Funding condition)
     \begin{itemize}
-        \item $g^B - \hat{V} -\theta^B P^B = g^B - C^V + C^I := \epsilon^h \ (>0)$
+        \item $g^B - \hat{V} -\theta^B P^B = g^B - C^V + C^I := \epsilon^h $
         \item 自社がdefaultした場合、cash flowが生じる
     \end{itemize}
 The dynamics of Hedge portfolio $\hat{V} + \Pi$
 $$ d (\hat{V} + \Pi)$$ 
-$$=\textcolor{red}{\{ (\frac{\partial }{ \partial t} + \mathcal{A}) \hat{V} + r^F\delta^FP^F + \lambda^c(g^c - \hat{V}) -r^vC^v - r_iC_i \}}dt + \epsilon^h dJ^B $$
-$$=\textcolor{blue}{\{ (\frac{\partial }{ \partial t} + \mathcal{A}) \hat{V} + r^F\delta^FP^F + \lambda^c(g^c - \hat{V}) -r^vC^v - r_iC_i + \epsilon^h \lambda^B\}}dt$$ $$+ \epsilon^h  (dJ^B - \lambda^B dt) $$
+$$=\textcolor{red}{\{ (\partial_t + \frac{1}{2}\sigma_X^2 X^2 \partial^2_{X}+ \gamma^X X \partial_{X}) \hat{V} + \theta^B r^B P^B + \lambda^C(g^C-\hat{V})  \}}dt$$ 
+$$+ \epsilon^h dJ^B $$
+$$=\textcolor{blue}{\{ (\partial_t + \frac{1}{2}\sigma_X^2 X^2 \partial^2_{X}+ \gamma^X X \partial_{X}) \hat{V} + \theta^B r^B P^B + \lambda^C(g^C-\hat{V})+\epsilon^h \lambda^B\}}$$ $$\times dt+ \epsilon^h  (dJ^B - \lambda^B dt) $$
 \end{frame}
 
 \begin{frame}
-    Derivativenの価値とは
+    Derivativeの価値とは
     \begin{itemize}
         \item 将来のCFの現在価値
         \item Corporate Financeの考え方
         \begin{itemize}
-            \item 株主価値: 負債は考慮しない
-            \item 企業価値　負債まで込める
+            \item 株主価値: 負債(債権者価値)は考慮しない
+            \item 企業価値:　負債まで込めた企業のトータルの価値
         \end{itemize}
-        \item Derivativeの価値
+        \item Derivativeの場合 
         \begin{itemize}
-            \item 株主価値 : 自社のdefault以前まで完全にヘッジ出来るようなもの
-            \item 企業価値 : 自社のdefaultによるCFの回収による収益の期待値まで込めてヘッジ出来るようなもの
+            \item 株主価値 
+            \begin{itemize}
+                \item 倒産後の改修による収益は期待できない。
+                \item 株主目線のデリバティブ価値は、 hedgeにより自社が倒産する以前は完全にヘッジできるような価値
+            \end{itemize}
+                $$\textcolor{red}{\{ (\partial_t + \frac{1}{2}\sigma_X^2 X^2 \partial^2_{X}+ \gamma^X X \partial_{X}) \hat{V} + \theta^B r^B P^B + \lambda^C(g^C-\hat{V})  \}}=0$$
+            \item 企業価値 
+          \begin{itemize}
+              \item 債権者はデフォルト以降の回収による収益を期待できる。　
+              \item 企業価値目線のデリバティブ価値は、hedgeにより自社のdefaultによるCFの期待値まで込めて0になるような価値
+          \end{itemize}  
+$$\textcolor{blue}{\{ (\partial_t + \frac{1}{2}\sigma_X^2 X^2 \partial^2_{X}+ \gamma^X X \partial_{X}) \hat{V} + \theta^B r^B P^B}$$
+$$\textcolor{blue}{+ \lambda^C(g^C-\hat{V})+\epsilon^h \lambda^B\}}=0$$
+
         \end{itemize}
     \end{itemize}
 \end{frame}
@@ -199,9 +214,9 @@ $$=\textcolor{blue}{\{ (\frac{\partial }{ \partial t} + \mathcal{A}) \hat{V} + r
     Semi-Replication 1 (株主価値): 自社のdefault risk意外を全てhedge
    $$ U = CVA + FVA + MVA $$
    \begin{align*}
-    &CVA = -E[\int_0^T \lambda_c(t) D^{r_F + \lambda_c}(V_{c^V}-g^C) \ dt]\\
-    &FVA = -E[\int_0^T (r_F - r_{c_V}) D^{r_F + \lambda_c}(V_{c^V}-C^V) \ dt]\\
-    &MVA = -E[\int_0^T (r_F - r_{c_i}) D^{r_F + \lambda_c}C^I \  dt]
+    &CVA = -E[\int_0^T \lambda_C(t) D^{r^B + \lambda_C}(V_{C^V}-g^C) \ dt]\\
+    &FVA = -E[\int_0^T (r^B - r_{C^V}) D^{r^B + \lambda_C}(V_{C^V}-C^V) \ dt]\\
+    &MVA = -E[\int_0^T (r^B - r_{C^I}) D^{r^B + \lambda_C}C^I \  dt]
    \end{align*}
    \begin{itemize}
        \item FVAが陽に表れる
@@ -214,10 +229,10 @@ $$=\textcolor{blue}{\{ (\frac{\partial }{ \partial t} + \mathcal{A}) \hat{V} + r
     Semi-Replication 2(企業価値) : Martingale Part以外をすべてhedge
    $$ U = CVA + DVA + VMVA + VMVA + IMVA$$
    \begin{align*}
-    &CVA = -E[\int_0^T \lambda_c(t) D^{r + \lambda_B + \lambda_c}(V_{c_v}-g_c) \ dt]\\
-    &DVA = -E[\int_0^T \lambda_B(t) D^{r + \lambda_B + \lambda_c}(V_{c_v}-g_B) \ dt]\\
-    &VMVA = -E[\int_0^T (r - r_{c_V}) D^{r + \lambda_B + \lambda_c}(V_{c_v}-C_v) \ dt]\\
-    &IMVA = -E[\int_0^T (r - r_{c_i}) D^{r + \lambda_B + \lambda_c} C_i \  dt]
+    &CVA = -E[\int_0^T \lambda_C(t) D^{r + \lambda_B + \lambda_C}(V_{C^V}-g^C) \ dt]\\
+    &DVA = -E[\int_0^T \lambda_B(t) D^{r + \lambda_B + \lambda_C}(V_{C^V}-g^B) \ dt]\\
+    &VMVA = -E[\int_0^T (r - r_{C^V}) D^{r + \lambda_B + \lambda_C}(V_{C^V}-C^V) \ dt]\\
+    &IMVA = -E[\int_0^T (r - r_{C^I}) D^{r + \lambda_B + \lambda_C} C^I \  dt]
    \end{align*}
    \begin{itemize}
        \item FVAは陽に現れない
@@ -248,9 +263,10 @@ $$=\textcolor{blue}{\{ (\frac{\partial }{ \partial t} + \mathcal{A}) \hat{V} + r
             \begin{itemize}
                 \item $V_k(t)$ : 取引kのExposure($t$時点の時価)
                     $$ V_k(t) = E\left[ \sum_{t_i > t} D(t, t_i) F_k(t_i, X(t_i)) | \mathcal{F}_t\right]$$
+                \item $\sum_{t_i } F_k(t_i, )$ : 取引$k$のペイオフ
                 \item $D(s,t)$ : $[s, t]$間のdiscount
                 \item $s$ : spread 
-                \item $C$ : collateral
+                \item $C$ : collateral, VM + IM
             \end{itemize}
     \end{itemize}
 \end{frame} 
@@ -264,13 +280,13 @@ $$=\textcolor{blue}{\{ (\frac{\partial }{ \partial t} + \mathcal{A}) \hat{V} + r
             $$V_k(t) \approx \tilde{V}_k(X(t))$$
         \item Netting\\
             $\tilde{V}_k$ をcounterparty(netting set)毎に分ける。\\
-            NettされたExposure $\tilde{V}=\sum_{k} \tilde{V}_k$
+            NetされたExposure $\tilde{V}=\sum_{k} \tilde{V}_k$
             を計算する。
         \item Aggregation
             \begin{itemize}
                 \item $\tilde{V}(X(t))$から、Collateral $\tilde{C}$を計算.
                 \item collateral勘案後のExposureにspreadをかけて積分を実施.
-                    $$ E\left[\int_0^T D(t)s(t) \left(\tilde{V}_k(X(t)) -\tilde{C(t)} \right) D(t)\ dt\right].$$
+                    $$ E\left[\int_0^T D(t)s(t) \left(\tilde{V}(X(t)) -\tilde{C}(t) \right)^{(+)} \ dt\right].$$
             \end{itemize}
     \end{itemize}
 \end{frame}
@@ -281,8 +297,8 @@ $$=\textcolor{blue}{\{ (\frac{\partial }{ \partial t} + \mathcal{A}) \hat{V} + r
         \item VM(Variation Margin)
             \begin{itemize}
                 \item $H$: Threshold. Exposureがこの額を超えていないと担保なし。
-                \item $M$: MTA(minimum transfer amount). 支払い担保の最低額。
-                \item $\delta$: MPOR(mergin period of risk). Default時点と最後に担保が支払われた時点のバッファ期間. e.g. 14day.
+                \item $M$: MTA(minimum transfer amount). 追加差入担保の最低額。
+                \item $\delta$: MPOR(mergin period of risk). Default時点の宣言までの猶予期間. e.g. 14day.
             \end{itemize}
             $$ C(t) = \left(V(t- \delta) - H\right)^+ 1_{\{V(t-\delta)-H > M\}}$$
         \item IM(Initial Margin)
@@ -316,9 +332,9 @@ $$=\textcolor{blue}{\{ (\frac{\partial }{ \partial t} + \mathcal{A}) \hat{V} + r
 
 \begin{frame}\frametitle{Implicit method}
 無担保の場合は、Exposureの近似精度を向上させる
-$$ XVA = E\left[\int_0^T D(t)s(t)\left(\sum_{k \in N_j(c)}V_k(t)\right)^+ \ dt\right] $$
-$$ = E\left[ \int_0^T D(t) s(t) \left(\sum_{k \in N_j(c)} F_k(t_k, X(t_k)) \right) 1_{\{\sum_{k \in N_j(c)} V_k(t) \ge 0 \}} \right] $$
-$$\approx E\left[ \int_0^T D(t) s(t) \left(\sum_{k \in N_j(c)} F_k(t_k, X(t_k)) \right) 1_{\{\sum_{k \in N_j(c)} \tilde{V}_k(t) \ge 0 \}} \right] $$
+$$ XVA = E[\int_0^T D(t)s(t)(\sum_{k \in N_j(c)}V_k(t))^+ \ dt] $$
+$$ = E[ \int_0^T D(t) s(t) E [(\sum_{k \in N_j(c)} F_k(t_k, X(t_k)) | \mathcal{F}_t] 1_{\{\sum_{k \in N_j(c)} V_k(t) \ge 0 \}} ] $$
+$$\approx E[ \int_0^T D(t) s(t) (\sum_{k \in N_j(c)} F_k(t_k, X(t_k)) ) 1_{\{\sum_{k \in N_j(c)} \tilde{V}_k(t) \ge 0 \}} ] $$
 \begin{itemize}
     \item Exposureの近似は正負の符号判定のみに用いられる。
     \item 値がどんなに離れていても符号さえ正しければ、誤差は発生しない。
@@ -361,7 +377,7 @@ $$|\hat{c}_2 - c_0| \leqq C_{p,\delta}L^{-\frac{3(1-\delta)^2}{2+(1+\delta)(N+1)
 
 \begin{frame}
     Numerical example.
-$X(t) = x_0 \exp(\sigma B_t + - 1/2 \sigma^2 t), F_k(x) = x - x_0, T_k = 2, 4, 6, 8, 10, \sigma = 0.3$
+$X(t) = x_0 \exp(\sigma B_t + - 1/2 \sigma^2 t), F_k(x) = x - x_0, T_k = 2, 4, 6, 8, 10, x_0=100, \sigma = 0.3$
     \begin{figure}
         \includegraphics[scale=0.25]{exposureAll.pdf}
     \end{figure}
@@ -421,16 +437,22 @@ $X(t) = x_0 \exp(\sigma B_t + - 1/2 \sigma^2 t), F_k(x) = x - x_0, T_k = 2, 4, 6
 \begin{frame}\frametitle{Freezing法の検証 }
     Setting
     \begin{itemize}
-        \item Greeks parameter: $\theta = x_0 \  or  \ \sigma$
-        \item model : BS model :  $d X(t,\theta) = X(t,\theta) ( \mu dt + \sigma dW(t)), \ X(0,\theta) = x_0.$
+        \item Greeks parameter: $\theta = x_0$  or  $\sigma.$
+        \item model : $d X(t,\theta) = X(t,\theta) ( \mu dt + \sigma dW(t)), \ X(0,\theta) = x_0.$
         \item Pay off function :$ F(x) = (x - K_1)^+  - K_2. $
-        \item Exposure: $$ V(x, \theta) = E[F(X(T, \theta)) |X(t, \theta) = x] $$
-        \item Approximated Exposure:  $\tilde{V}(x, \theta)\approx V(x, \theta)$
-        \item $EPE(t) = E[V(X(t))^+] $
+        \item Exposure: $ V(x, \theta) = E[F(X(T, \theta)) |X(t, \theta) = x] $
+        \item Approximated Exposure by LSM:  $\tilde{V}(x, \theta)\approx V(x, \theta)$
+    \end{itemize}
+    検証対象
+    \begin{itemize}
+        \item $D=\frac{\partial}{\partial \theta} E[V(X(t,\theta),\theta)^+] $の近似\\
+        ( $\frac{\partial }{\partial \theta} CVA = \int \textcolor{red}{\frac{\partial}{\partial \theta} E[V(X(t,\theta),\theta)^+]} D(t)\lambda(t)dt$)
     \end{itemize}
     Parameters
     \begin{itemize}
-        \item $x_0=100, K_1=100, K_2 = 30, T = 10, t = 5, \mu=0, \sigma=0.3$
+        \item $x_0=100, T = 10, t = 5, \mu=0, \sigma=0.3$
+        \item Test1: $K_1 = 150, K_2 = 0$
+        \item Test2: $K_1 = 100, K_2 = 30$
     \end{itemize}
 \end{frame}
 
@@ -459,28 +481,54 @@ $X(t) = x_0 \exp(\sigma B_t + - 1/2 \sigma^2 t), F_k(x) = x - x_0, T_k = 2, 4, 6
 
 \begin{frame}\textbf{Explicit法を用いたFreezing method}
     \begin{table}[htb]
-        \caption{Test result of Delta}
         \centering
-        \begin{tabular}{lcr}
-            \hline
-            method & mean & stdev \\
-            analytic & 5.83& 0.13 \\
-            Non Freezing & 5.39 & 0.37\\
-            Freezing & 5.02 & 0.63
-        \end{tabular}
+        \begin{minipage}[t]{.45\textwidth}
+            \caption{Test1 result of Delta}           
+            \begin{tabular}{lcr}
+                \hline
+                method & mean & stdev \\
+                analytic & 5.19& 0.13 \\
+                Non Freezing & 5.53 & 0.13\\
+                Freezing & 5.22 & 0.21
+            \end{tabular}
+        \end{minipage}
+        \hfill
+        \begin{minipage}[t]{.45\textwidth}
+            \caption{Test2 result of Delta}           
+            \begin{tabular}{lcr}
+                \hline
+                method & mean & stdev \\
+                analytic & 5.83& 0.13 \\
+                Non Freezing & 5.39 & 0.37\\
+                Freezing & 5.02 & 0.63
+            \end{tabular}
+        \end{minipage}
     \end{table}
     \begin{table}[htb]
-        \caption{Test result of Vega}
         \centering
-        \begin{tabular}{lcr}
-            \hline
-            method & mean & stdev \\
-            analytic & 1100.26 & 183.85\\
-            Non Freezing & 1208.47 & 206.66\\
-            Freezing & \textcolor{red}{822.14} & 172.29
-        \end{tabular}
+        \begin{minipage}[t]{.45\textwidth}
+            \caption{Test1 result of Vega}           
+            \begin{tabular}{lcr}
+                \hline
+                method & mean & stdev \\
+                analytic & 1246.77& 61.08 \\
+                Non Freezing & 1480.21 & 74.98\\
+                Freezing & \textcolor{red}{522.30} & 60.15
+            \end{tabular}
+        \end{minipage}
+        \hfill
+        \begin{minipage}[t]{.45\textwidth}
+            \caption{Test2 result of Vega}           
+            \begin{tabular}{lcr}
+                \hline
+                method & mean & stdev \\
+                analytic & 1100.26 & 183.85\\
+                Non Freezing & 1208.47 & 206.66\\
+                Freezing & \textcolor{red}{822.14} & 172.29
+            \end{tabular}
+        \end{minipage}
     \end{table}
-        DeltaはFreezingしても大差ないが、VegaはFreezingすると誤差が大きい
+        FreezingしてもDeltaは大差ないが、Vegaは誤差が大きい
 \end{frame}
 
 
@@ -497,31 +545,57 @@ $X(t) = x_0 \exp(\sigma B_t + - 1/2 \sigma^2 t), F_k(x) = x - x_0, T_k = 2, 4, 6
 
 \begin{frame}\textbf{Implicit法を用いたFreezing method}
     \begin{table}[htb]
-        \caption{Test result of Delta}
         \centering
-        \begin{tabular}{lcr}
-            \hline
-            method & mean & stdev \\
-            analytic & 5.83 & 0.13 \\
-            Non Freezing & 5.51 & 0.37\\
-            Freezing & 5.51 & 0.37
-        \end{tabular}
+        \begin{minipage}[t]{.45\textwidth}
+            \caption{Test1 result of Delta}           
+            \begin{tabular}{lcr}
+                \hline
+                method & mean & stdev \\
+                analytic & 5.19& 0.13 \\
+                Non Freezing & 5.16 & 0.12\\
+                Freezing & 5.16 & 0.12
+            \end{tabular}
+        \end{minipage}
+        \hfill
+        \begin{minipage}[t]{.45\textwidth}
+            \caption{Test2 result of Delta}           
+            \begin{tabular}{lcr}
+                \hline
+                method & mean & stdev \\
+                analytic & 5.83 & 0.13 \\
+                Non Freezing & 5.51 & 0.37\\
+                Freezing & 5.51 & 0.37
+            \end{tabular}
+        \end{minipage}
     \end{table}
     \begin{table}[htb]
-        \caption{Test result of Vega}
         \centering
-        \begin{tabular}{lcr}
-            \hline
-            method & mean & stdev \\
-            analytic & 1100.26 & 183.35\\
-            Non Freezing & 1075.87 & 182.32\\
-            Freezing & \textcolor{red}{1075.87} & 182.32
-        \end{tabular}
+        \begin{minipage}[t]{.45\textwidth}
+            \caption{Test1 result of Vega}           
+            \begin{tabular}{lcr}
+                \hline
+                method & mean & stdev \\
+                analytic & 1246.77& 61.08 \\
+                Non Freezing & 1262.38 & 60.99\\
+                Freezing & \textcolor{red}{1262.38} & 60.99
+            \end{tabular}
+        \end{minipage}
+        \hfill
+        \begin{minipage}[t]{.45\textwidth}
+            \caption{Test2 result of Vega}           
+            \begin{tabular}{lcr}
+                \hline
+                method & mean & stdev \\
+                analytic & 1100.26 & 183.35\\
+                Non Freezing & 1075.87 & 182.32\\
+                Freezing & \textcolor{red}{1075.87} & 182.32
+            \end{tabular}
+        \end{minipage}
     \end{table}
     Implicit methodを使った場合、DeltaもVegaもうまくいっている
 \end{frame}
 
-\begin{frame}\textbf{Test結果の分析(Explicit法)}
+\begin{frame}\textbf{Test結果の分析(Implicit法)}
     $$ \frac{\partial}{\partial \theta} E[F(X(T, \theta ) 1_{\{  V\left(X(t, \theta), \theta\right) \geqq 0\}}  ] $$
     $$= E[ \frac{\partial F}{\partial x}(X(T, \theta)
     \frac{\partial X(t, \theta)}{\partial \theta}  1_{\{  V\left(X(t, \theta), \theta\right) \geqq 0\}} ) ] $$
