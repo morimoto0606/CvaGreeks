@@ -68,20 +68,20 @@
     \begin{itemize}
         \item $V$ : 従来のデリバティブの価値
             \begin{itemize}
-                \item Counter party default risk を考慮しない
-                \item 自社の default risk を考慮しない
-                \item 自社のFunding コストを考慮しない
-                \item 担保のcash flowを考慮しない(考慮したとしても完全担保 )
+                \item counter party default risk を考慮しない
+                \item own default risk を考慮しない
+                \item funding コストを考慮しない
+                \item margin (variation margin, initial margin)のcash flowを考慮しない(考慮したとしても完全担保 $\Rightarrow$ois discount)
             \end{itemize}
-        \item $\hat{V}$ : 上記に付随する金利のスプレッドやCash flowを考慮したデリバティブの価値
+        \item $\hat{V}$ : 上記に付随する金利のスプレッドやcash flowを考慮したデリバティブの価値
     \end{itemize}
     $$\hat{V} = V + U, $$
     $$U = \sum_{X=C, D, F, M, ...} \textcolor{red}{X}VA$$
     \begin{itemize}
         \item CVA: counterparty credit risk adjustment
-        \item DVA: Own credit risk adjustment
-        \item FVA: Funding cost
-        \item MVA: Initial Margin cost
+        \item DVA: own credit risk adjustment
+        \item FVA: funding cost
+        \item MVA: initial margin cost
     \end{itemize}
 \end{frame}
 
@@ -90,11 +90,18 @@
         \item $\hat{V}, U$ の導出
         \begin{itemize}
             \item Piterburg(2010):
-            Replication theory を使ったFVAの導出
-            \item Burgard and Kjaer(2011,  2013), Kjaer(2017):
-            Semi-ReplicationによるXVAの定式化(Quant of the year 2015)
-            \item Green, Knyon(2014, 2015):
-            Semi-Replicationに基づくKVA, MVA 等の導入
+           \begin{itemize}
+               \item Replication theory を使ったFVAの導出
+           \end{itemize} 
+            \item Burgard and Kjaer(2011,  2013)
+            \begin{itemize}
+                \item Semi-ReplicationによるXVAの定式化(Quant of the year 2015)
+            \end{itemize}
+            \item Green, Knyon(2014, 2015)
+            \begin{itemize}
+                \item Semi-Replicationに基づくKVA, MVA 等の導入
+            \end{itemize}
+            
             \item その他の定式化 : Fuji and Takahashi(2011), Kusuoka(2012), Takada(2014)
         \end{itemize}
         \item XVA(FVA)の定義をめぐる議論
@@ -105,10 +112,15 @@
                 \item Modiliani-Millarの定理: 企業価値はFunding strategyに依存しない 
             \end{itemize}
             
-            \item Albanese and Andersen(2015)\\
-            バランスシートを使った議論、株主価値と企業価値の導入
-            \item Kjaer(2017) \\
-            Semi Replicationを使った株主価値と企業価値の解釈
+            \item Albanese and Andersen(2015)
+            \begin{itemize}
+                \item Derivativeの株主価値と企業価値の導入
+                \item 株主価値はfundingに依存するが、企業価値としては依存しない
+            \end{itemize}
+            \item Kjaer(2017) 
+            \begin{itemize}
+                \item Semi-Replicationを使った株主価値と企業価値の解釈
+            \end{itemize}
         \end{itemize}
     \end{itemize}
 \end{frame}
@@ -128,8 +140,8 @@
             $$d\beta^{*} = \gamma^* \beta^* dt, * = X, C$$
             \item スプレッドの関係, r : risk free rate　
             $$r^* = r + s^*, \ s^* = (1-R^*)\lambda^*, \ *= B, C$$
-            \item $C = C^V + C^I$ : collateral (Variation margin, initial margin)
-            \item $r_{C^V} , r_{C^I}$ : collateral rates
+            \item $C^V, C^I$ : collateral (variation margin, initial margin)
+            \item $r^V , r^I$ : collateral rates
         \end{itemize}
     \end{itemize}
 \end{frame}
@@ -156,7 +168,7 @@ $$d \Pi = \theta^X dX + \theta^B dP^B + \theta^C dP^C
 The dynamics of Hedge portfolio $\hat{V} + \Pi$
 $$ d (\hat{V} + \Pi) = (\textcolor{red}{\theta^X + \frac{ \partial \hat{V}}{\partial X}} )dX $$
 $$ + \textcolor{blue}{\{ (\partial_t + \frac{1}{2} \sigma_X^2 X^2 \partial_X^2) \hat{V} + \theta^B r^B P^B + \theta^C r^C P^C}$$ 
-$$ \textcolor{blue}{-\theta^C \gamma^C P^C -\theta^X \gamma^X X -r^VC^V - r^IC^I \}}dt$$
+$$ \textcolor{blue}{-\theta^C \gamma^C P^C -\theta^X \gamma^X X -r^VC^V + r^IC^I \}}dt$$
 $$+ \textcolor{purple}{(g^B - \hat{V} -\theta^BP^B )} dJ^B + \textcolor{magenta}{(g^C - \hat{V} - \theta^CP^C)} dJ^C$$
 \end{frame}
 
@@ -215,12 +227,12 @@ $$\textcolor{blue}{+ \lambda^C(g^C-\hat{V})+\epsilon^h \lambda^B\}}=0$$
    $$ U = CVA + FVA + MVA $$
    \begin{align*}
     &CVA = -E[\int_0^T \lambda_C(t) D^{r^B + \lambda_C}(V_{C^V}-g^C) \ dt]\\
-    &FVA = -E[\int_0^T (r^B - r_{C^V}) D^{r^B + \lambda_C}(V_{C^V}-C^V) \ dt]\\
-    &MVA = -E[\int_0^T (r^B - r_{C^I}) D^{r^B + \lambda_C}C^I \  dt]
+    &FVA = -E[\int_0^T (r^B - r^V) D^{r^B + \lambda_C}(V_{C^V}-C^V) \ dt]\\
+    &MVA = -E[\int_0^T (r^B - r^I) D^{r^B + \lambda_C}C^I \  dt]
    \end{align*}
    \begin{itemize}
        \item FVAが陽に表れる
-       \item DiscountはFunding rate 
+       \item Discountはfunding rate 
    \end{itemize}
 \end{frame}
 
@@ -231,13 +243,12 @@ $$\textcolor{blue}{+ \lambda^C(g^C-\hat{V})+\epsilon^h \lambda^B\}}=0$$
    \begin{align*}
     &CVA = -E[\int_0^T \lambda_C(t) D^{r + \lambda_B + \lambda_C}(V_{C^V}-g^C) \ dt]\\
     &DVA = -E[\int_0^T \lambda_B(t) D^{r + \lambda_B + \lambda_C}(V_{C^V}-g^B) \ dt]\\
-    &VMVA = -E[\int_0^T (r - r_{C^V}) D^{r + \lambda_B + \lambda_C}(V_{C^V}-C^V) \ dt]\\
-    &IMVA = -E[\int_0^T (r - r_{C^I}) D^{r + \lambda_B + \lambda_C} C^I \  dt]
+    &VMVA = -E[\int_0^T (r - r^V) D^{r + \lambda_B + \lambda_C}(V_{C^V}-C^V) \ dt]\\
+    &IMVA = -E[\int_0^T (r - r^I) D^{r + \lambda_B + \lambda_C} C^I \  dt]
    \end{align*}
    \begin{itemize}
-       \item FVAは陽に現れない
-       \item MM定理にも矛盾しない
-       \item DiscountはCollateral Rate + hazard rateによる調整
+       \item FVAは現れない(MM定理にも矛盾しない)
+       \item Discountはcollateral Rate + hazard rateによる調整
    \end{itemize}
 \end{frame}
 
@@ -262,8 +273,8 @@ $$\textcolor{blue}{+ \lambda^C(g^C-\hat{V})+\epsilon^h \lambda^B\}}=0$$
             $$ \text{XVA}=  E\left[\int_0^T s(t)D(t)\left(\sum_{k}V_k(t)- C(t)\right)^{(+)} \ dt\right] $$
             \begin{itemize}
                 \item $V_k(t)$ : 取引kのExposure($t$時点の時価)
-                    $$ V_k(t) = E\left[ \sum_{t_i > t} D(t, t_i) F_k(t_i, X(t_i)) | \mathcal{F}_t\right]$$
-                \item $\sum_{t_i } F_k(t_i, )$ : 取引$k$のペイオフ
+                    $$ V_k(t) = E\left[ \sum_{T_j > t} D(t, T_j) F_k(T_j, X(T_j)) | \mathcal{F}_t\right]$$
+                \item $\sum_{T_j } F_k(T_j, )$ : 取引$k$のペイオフ
                 \item $D(s,t)$ : $[s, t]$間のdiscount
                 \item $s$ : spread 
                 \item $C$ : collateral, VM + IM
@@ -286,7 +297,7 @@ $$\textcolor{blue}{+ \lambda^C(g^C-\hat{V})+\epsilon^h \lambda^B\}}=0$$
             \begin{itemize}
                 \item $\tilde{V}(X(t))$から、Collateral $\tilde{C}$を計算.
                 \item collateral勘案後のExposureにspreadをかけて積分を実施.
-                    $$ E\left[\int_0^T D(t)s(t) \left(\tilde{V}(X(t)) -\tilde{C}(t) \right)^{(+)} \ dt\right].$$
+                    $$ E\left[\int_0^T D(0,t)s(t) \left(\tilde{V}(X(t)) -\tilde{C}(t) \right)^{(+)} \ dt\right].$$
             \end{itemize}
     \end{itemize}
 \end{frame}
@@ -300,13 +311,20 @@ $$\textcolor{blue}{+ \lambda^C(g^C-\hat{V})+\epsilon^h \lambda^B\}}=0$$
                 \item $M$: MTA(minimum transfer amount). 追加差入担保の最低額。
                 \item $\delta$: MPOR(mergin period of risk). Default時点の宣言までの猶予期間. e.g. 14day.
             \end{itemize}
-            $$ C(t) = \left(V(t- \delta) - H\right)^+ 1_{\{V(t-\delta)-H > M\}}$$
+        \end{itemize}
+    \begin{align*}
+       &\Delta C^V(t_i) = (V(t_i-\delta)-H-C^V(t_{i-1}))\\
+       &\times 1_{\{|V(t_i-\delta)-H-C^V(t_{i-1})| \ge M, V(t_i)\ge H\}}
+       -C^V(t_{i-1})1_{\{V(t_{i-1}-\delta)<H\}}.
+   \end{align*}
+    \begin{itemize}
         \item IM(Initial Margin)
             \begin{itemize}
                 \item MPOR期間のGap Riskをカバーする。e.g. 10day 99\% Var.
-                \item CCP(central counter party)や、SIMM(standard initial margin model)
-                    ごとにGreeksを使ったVarの近似公式が決められている。
-                    $$IM(t) = \sum \phi_{i,j} \frac{\partial V(t)}{\partial X^i(t)} \frac{\partial V(t)}{\partial X^j(t)}$$
+                \item CCP(central counter party) : VaRに基づくIM
+                \item 証拠金規制　ISDA SIMM(standard initial margin model)
+                    Greeksを使った近似公式
+                    $$C^I(t) = \sum \phi_{i,j} \frac{\partial V(t)}{\partial X^i(t)} \frac{\partial V(t)}{\partial X^j(t)}$$
             \end{itemize}
     \end{itemize}
 \end{frame}
@@ -320,7 +338,7 @@ $$\textcolor{blue}{+ \lambda^C(g^C-\hat{V})+\epsilon^h \lambda^B\}}=0$$
         \item LSMのメリット
         \begin{itemize}
             \item 計算が高速かつ汎用的: modelや商品性によらず、一律に適応できる
-            \item Dataがシンプルになる: 複雑な取引情報を多項式の係数で表現できる
+            \item Dataがシンプルになる: 複雑な取引ごとのexposureを多項式で表現できる
             \item Nettingが容易: pathを発生させなくても、多項式の係数の和でnettingできる。
         \end{itemize}
     \item LSMのデメリット
@@ -330,11 +348,12 @@ $$\textcolor{blue}{+ \lambda^C(g^C-\hat{V})+\epsilon^h \lambda^B\}}=0$$
     \end{itemize}
 \end{frame}
 
-\begin{frame}\frametitle{Implicit method}
-無担保の場合は、Exposureの近似精度を向上させる
-$$ XVA = E[\int_0^T D(t)s(t)(\sum_{k \in N_j(c)}V_k(t))^+ \ dt] $$
-$$ = E[ \int_0^T D(t) s(t) E [(\sum_{k \in N_j(c)} F_k(t_k, X(t_k)) | \mathcal{F}_t] 1_{\{\sum_{k \in N_j(c)} V_k(t) \ge 0 \}} ] $$
-$$\approx E[ \int_0^T D(t) s(t) (\sum_{k \in N_j(c)} F_k(t_k, X(t_k)) ) 1_{\{\sum_{k \in N_j(c)} \tilde{V}_k(t) \ge 0 \}} ] $$
+\begin{frame}
+\textbf{Implicit method :}
+無担保の場合は、Exposureの近似精度を向上させることができる
+$$ XVA = E[\int_0^T D(t)s(t)(\sum_{k , T_j}V_k(t))^+ \ dt] $$
+$$ = E[ \int_0^T D(t) s(t) E [(\sum_{k , T_j} F_k(T_j, X(T_j)) | \mathcal{F}_t] 1_{\{\sum_{k , T_j} V_k(t) \ge 0 \}} ] $$
+$$\approx E[ \int_0^T D(t) s(t) (\sum_{k , T_j} F_k(T_j, X(T_j)) ) 1_{\{\sum_{k , T_j} \tilde{V}_k(t) \ge 0 \}} ] $$
 \begin{itemize}
     \item Exposureの近似は正負の符号判定のみに用いられる。
     \item 値がどんなに離れていても符号さえ正しければ、誤差は発生しない。
@@ -345,18 +364,17 @@ $$\approx E[ \int_0^T D(t) s(t) (\sum_{k \in N_j(c)} F_k(t_k, X(t_k)) ) 1_{\{\su
     \textbf{Implicit法の誤差評価(Morimoto.2015)}
     \begin{itemize}
         \item $\tilde{V}$ として、Stochastic meshを用いる
-         $$\tilde{V} = (Q_{t_i,T_k,\varepsilon}^{(k,L,\omega)}F_k)$$
+         $$\tilde{V}_k(x) = (Q_{t,T_j,\varepsilon}^{(k,L,\omega)}\sum_{T_j}F_k(T_j,\cdot))(x)$$
+         $$ = \frac{1}{L}\sum_{\ell=1}^L\frac{(\sum_{T_j}F_k(T_j,X(T_j))) )p(T_j -t, x, X_{\ell}(T_j) )}{\frac{1}{L} \sum_{m=1}^L p(T_j -t, X_m(t), X_{\ell}(T_j) )}.$$
         \item Explicit法
         \begin{align*}
-            &\hat{c}_1(\omega) =E^{\mu} [ \sum_{i=0}^{n-1}(t_{i+1}-t_{i}) \{(\sum_{k:T_k\geqq t_{i+1}} (Q_{t_i,T_k,\varepsilon}^{(k,L,\omega)}F_k)(\pi_k{X}(t))\vee0\} ]
+            &\hat{c}_1(\omega) =E^{\mu} [ \sum_{i=0}^{n-1}(t_{i+1}-t_{i}) \{(\sum_{k:T_j\geqq t_{i+1}} (Q_{t_i,T_j,\varepsilon}^{(k,L,\omega)}F_k)(\pi_k{X}(t))\vee0\} ].
         \end{align*}
         \item Implicit法
         \begin{align*}
-            \hat{c}_2(\omega)=\sum_{i=0}^{n-1}(t_{i+1}-t_{i}) &E^{\mu}[( \sum_{k:T_k\geqq t_{i+1}}F_k(\pi_k X(T_k))) \\
-             &1_{\{\sum_{k:T_k\geqq t_{i+1}} (Q_{t_i,T_k,\varepsilon}^{(k,L,\omega)}F_k)(\pi_k X(t_i))) \geqq 0\}}].
+            \hat{c}_2(\omega)=\sum_{i=0}^{n-1}(t_{i+1}-t_{i}) &E^{\mu}[( \sum_{k:T_j\geqq t_{i+1}}F_k(\pi_k X(T_j))) \\
+             &1_{\{\sum_{k:T_j\geqq t_{i+1}} (Q_{t_i,T_j,\varepsilon}^{(k,L,\omega)}F_k)(\pi_k X(t_i))) \geqq 0\}}].
         \end{align*}
-
-
     \end{itemize}
 \end{frame}
 
@@ -366,18 +384,18 @@ $$\approx E[ \int_0^T D(t) s(t) (\sum_{k \in N_j(c)} F_k(t_k, X(t_k)) ) 1_{\{\su
     \end{align*}
     for any $\omega \in \Omega_{L}$ and $L \geqq 1$.
     If there exists $\gamma \in (0,1]$ such that
-$$\int_0^T E^{\mu}[ 1_{| \sum_{k:T_k\geqq t_{i+1}} (P_{T_k-t}^{(k)}F_k)(\pi_k (X(t)))| \leqq \theta\} } ]dt =O(\theta^{\gamma}), \text{as} \ \theta \downarrow 0,$$
+$$\int_0^T E^{\mu}[ 1_{| \sum_{k:T_j\geqq t_{i+1}} (P_{T_j-t}^{(k)}F_k)(\pi_k (X(t)))| \leqq \theta\} } ]dt =O(\theta^{\gamma}), \text{as} \ \theta \downarrow 0,$$
  \begin{align*}
  |\hat{c}_2(\omega)-c_0| \leqq C_{p,\delta}L^{-\frac{3(\gamma+1)(1-\delta)^2}{(\gamma+2)(2+(1+\delta)(\tilde{N}+1)\ell_0/2)}},
  \end{align*}
 特に$\gamma = 1$の場合、
-$$|\hat{c}_1 - c_0| \leqq C_{p,\delta}L^{-\frac{3(1-\delta)^2}{2(2+(1+\delta)(N+1)\ell_0/2)}}$$ 
+$$|\hat{c}_1 - c_0| \leqq C_{p,\delta}L^{-\frac{3(1-\delta)^2}{\textcolor{red}{2}(2+(1+\delta)(N+1)\ell_0/2)}}$$ 
 $$|\hat{c}_2 - c_0| \leqq C_{p,\delta}L^{-\frac{3(1-\delta)^2}{2+(1+\delta)(N+1)\ell_0/2}}$$ 
 \end{frame}
 
 \begin{frame}
     Numerical example.
-$X(t) = x_0 \exp(\sigma B_t + - 1/2 \sigma^2 t), F_k(x) = x - x_0, T_k = 2, 4, 6, 8, 10, x_0=100, \sigma = 0.3$
+$X(t) = x_0 \exp(\sigma B_t - 1/2 \sigma^2 t), F(T_j, x) = x - x_0, T_j = 2, 4, 6, 8, 10, x_0=100, \sigma = 0.3$
     \begin{figure}
         \includegraphics[scale=0.25]{exposureAll.pdf}
     \end{figure}
@@ -613,6 +631,13 @@ $X(t) = x_0 \exp(\sigma B_t + - 1/2 \sigma^2 t), F_k(x) = x - x_0, T_k = 2, 4, 6
         \item 基本的な関数の微分は既知なので、その関数もプログラムしておく
         \item 最終的に得られる関数は基本関数の合成なので、Treeをたどって、各ノードの微分を掛け合わせて行くことが、Chain ruleに対応しており、最終的なGreeksが求められる
     \end{itemize}
+    example
+    \begin{itemize}
+        \item $x_4 = f_4(x_1, x_2, x_3)$
+        \item $x_3 = f_3(x_1)$
+        \item $x_2 = f_2(x_1)$
+        \item $ \frac{d x_4}{d x_1} = \frac{\partial f_4}{\partial x_1} + \frac{\partial f_4}{\partial x_2} \frac{\partial f_2}{\partial x_1} + \frac{\partial f_4}{\partial x_3} \frac{\partial f_3}{\partial x_1}$
+    \end{itemize}
 \end{frame}
 
 \begin{frame}
@@ -632,9 +657,9 @@ $X(t) = x_0 \exp(\sigma B_t + - 1/2 \sigma^2 t), F_k(x) = x - x_0, T_k = 2, 4, 6
     \item デメリット
     \begin{itemize}
         \item 大量のメモリが必要
-        \item On memory で一気通貫で計算しないと厳しい。途中で中間データを出力しながらだと、巨大なヤコビ行列を計算する必要が生じる。　
-        \item 途中に滑らかでない関数が入ると一気に依存するポイントのGreeksがおかしくなる
-        \item pathごとの微分を行なっていくので、熱核で積分して滑らかになる要素が含まれていない
+        \item On memory で通して計算する必要がある。途中で中間データを出力すると、巨大なヤコビ行列が表れて効率がよくない
+        \item 途中に滑らかでない関数が入ると依存するポイントのGreeksが正しく計算できない
+        \item pathごとの微分を行なっていくので、熱核の積分により滑らかになる効果を勘案できない
         $$ E[F(X(t, x))] = (P_t F)(x)$$
     \end{itemize}
     \end{itemize}
@@ -645,12 +670,12 @@ $X(t) = x_0 \exp(\sigma B_t + - 1/2 \sigma^2 t), F_k(x) = x - x_0, T_k = 2, 4, 6
     AADの最近の進展
     \begin{itemize}
         \item Treeの縮約技術の進展
-        \item Stochastic AAD (Flies) \\
-        確率変数のツリーを作る（pathのベクトル）
+        \item Stochastic AAD (Flies 2017) \\
+        確率変数のツリーを作る（各ノードがpathのベクトル）
         \item MVAへの応用
         $$MVA =E[ \sum \phi_{i,j} \frac{\partial V(t)}{\partial X^i(t)} \frac{\partial V(t)}{\partial X^j(t)}]$$
-        $$E\left[ \sum \phi_{i,j}  E\left[ \frac{\partial F(X(T))}{\partial X^i(t)} | \mathcal{F}_t\right] E\left[ \frac{\partial F(X(T))}{\partial X^i(t)} | \mathcal{F}_t \right] \right]$$
-        \item 条件付期待値の中身
+        $$E\left[ \sum \phi_{i,j}  E\left[ \frac{\partial F(X(T))}{\partial X^i(t)} | \mathcal{F}_t\right] E\left[ \frac{\partial F(X(T))}{\partial X^j(t)} | \mathcal{F}_t \right] \right]$$
+        \item 条件付期待値の中身にADが直接利用できるが、その条件付期待値の計算が必要(今後の課題)
     \end{itemize}
 \end{frame}
 
